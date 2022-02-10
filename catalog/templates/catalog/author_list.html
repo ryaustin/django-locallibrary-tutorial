@@ -4,9 +4,13 @@
 
 <h1>Author List</h1>
 
-{% if author_list %}
-  <ul>
+<a href="{% url 'author-create' %}" class="btn btn-sm btn-outline-primary">
+  <span data-feather="user-plus"></span>
+    Create Author
+</a>
 
+{% if author_list %}
+<ul style="padding-top: 2em;">
   {% for author in author_list %}
     <li>
       <a href="{{ author.get_absolute_url }}">
