@@ -2,12 +2,13 @@
 
 {% block content %}
 
-<form action="" method="post">
+<form hx-put="{{ author.get_absolute_url }}" hx-target="this" hx-swap="outerHTML">
     {% csrf_token %}
     <table>
     {{ form.as_table }}
     </table>
-    <input type="submit" value="Submit" />
+    <button class="btn">Submit</button>
+    <button class="btn" hx-get="{{ author.get_absolute_url }}">Cancel</button>
     
 </form>
 {% endblock %}

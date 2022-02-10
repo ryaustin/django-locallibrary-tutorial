@@ -2,7 +2,11 @@
 
 {% block content %}
 
-<h1>Author: {{ author }} </h1>
+<h1>Author: {{ author }}
+  <button hx-get="{% url 'author-update' author.pk %}" class="btn btn-primary">
+    Click To Edit
+    </button>
+</h1>
 <p>{{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %}</p>
 
 <div style="margin-left:20px;margin-top:20px">
