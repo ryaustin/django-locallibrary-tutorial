@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from operator import sub
+from django.shortcuts import redirect, render
+from django.contrib import messages
 
 # Create your views here.
 
-from .models import Book, Author, BookInstance, Genre
+from .models import Book, Author, BookInstance, Genre, Cart
 
 
 def index(request):
@@ -166,3 +168,82 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     model = Book
     success_url = reverse_lazy('books')
     permission_required = 'catalog.can_mark_returned'
+
+# @permission_required
+def book_store(request):
+    book_list = Book.objects.all()
+    cart = get_cart(request)
+    if not cart:
+        make_cart(request)
+        
+    context = {
+        'book_list' : book_list,
+        'cart' : cart
+    }
+    return render(request, 'store_no_htmx/book_store.html', context)
+
+def make_cart(request):
+    cart = Cart(owner=request.user).save()
+    return cart
+
+def get_cart(request):
+    cart = request.user.cart_set.all().last()
+    return cart
+
+def cart_item_count(request):
+    cart = get_cart(request)
+    cart_item_count = 0
+    # sum[cart.items]
+    context = { 'cart_item_count' : cart_item_count }
+    return render(request, 'store_htmx/_partial_cart_item_count.html', context)
+
+def clear_cart(request):
+    cart = get_cart(request)
+    cart.items.clear()
+    cart.save()
+    return redirect('store')
+
+def add_to_cart(request, book_id, go_to_cart=False):
+    cart = get_cart(request)
+    book = Book.objects.get(id=book_id)
+    try:
+        cart.items[book.title]
+    except KeyError:
+        # If the key does not exsist we initialize it with 0
+        cart.items[book.title] = 0
+    cart.items[book.title] += 1
+    cart.save()
+    if not go_to_cart:
+        return redirect('store')
+    return redirect('cart-detail', cart.id) 
+
+def remove_from_cart(request, book_id):
+    cart = get_cart(request)
+    book = Book.objects.get(id=book_id)
+    title = book.title
+    try:
+        cart.items.pop(title)
+    except KeyError:
+        messages.error(request, f"Book: '{title}' is not in your cart")
+        return redirect('store')
+    cart.save()
+    messages.success(request, f"Book: '{title}' was removed from your cart")
+    return redirect('cart-detail', cart.id)
+
+def cart_detail(request, *args, **kwargs):
+    cart = Cart.objects.get(pk=int(kwargs['cart_id']))
+    book_list = []
+    book_names = cart.items.keys()
+    for _book in book_names:
+        book = Book.objects.get(title=_book)
+        price = book.price
+        qty = cart.items[_book]
+        subtotal = price * qty
+        carted_book = {
+            'book' : book,
+            'qty' : qty,
+            'subtotal' : subtotal
+        }
+        book_list.append(carted_book)
+    context = { 'cart':cart, 'book_list' : book_list, }
+    return render(request, 'store_no_htmx/cart_detail.html', context)
