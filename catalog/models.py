@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 # Create your models here.
 
@@ -42,6 +43,8 @@ class Book(models.Model):
     # ManyToManyField used because a genre can contain many books and a Book can cover many genres.
     # Genre class has already been defined so we can specify the object above.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    qty_on_hand = models.IntegerField(default=0)
     
     class Meta:
         ordering = ['title', 'author']
@@ -59,7 +62,10 @@ class Book(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.title
-
+ 
+    def add_to_cart(self, request):
+        cart = Cart()
+        cart.owner = request.user
 
 import uuid  # Required for unique book instances
 from datetime import date
@@ -122,3 +128,37 @@ class Author(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return '{0}, {1}'.format(self.last_name, self.first_name)
+
+
+class Cart(models.Model):
+    """Model representing a shopping cart"""
+    # items = models.ManyToManyField(Book)
+    items = models.JSONField(default=dict)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def quantity(self):
+        """Returns the Qty of items in the cart"""
+        return sum(self.items.values())
+    
+    def clear(self):
+        """Clears all items from the cart"""
+        self.items.clear()
+        return True
+    
+    def total(self):
+        """Returns the total for all items in the cart.
+        Note: Not the best way to do this.
+        """
+        total = 0
+        book_names = self.items.keys()
+        for _book in book_names:
+            book = Book.objects.get(title=_book)
+            price = book.price
+            qty = self.items[_book]
+            subtotal = price * qty
+            total += subtotal
+        return total
+    
+    def get_absolute_url(self):
+        """Returns the url to access a particular cart instance."""
+        return reverse('cart-detail', args=[str(self.id)])
