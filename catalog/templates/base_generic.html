@@ -14,7 +14,7 @@
   <script src="https://unpkg.com/htmx.org@1.6.1"></script>
   <script src="https://unpkg.com/feather-icons"></script>
 </head>
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
 <div class="container-fluid">
 
@@ -25,7 +25,8 @@
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'books' %}">All books</a></li>
     <li><a href="{% url 'authors' %}">All authors</a></li>
-    <li><a href="{% url 'store' %}"><span data-feather="shopping-bag"></span> BOOK STORE (no htmx)</a></li>
+    <li style="padding: 5px;"><a href="{% url 'store' %}"><span data-feather="shopping-bag"></span> BOOK STORE (no htmx)</a></li>
+    <li style="padding: 5px;"><a href="{% url 'store' use_htmx=True %}"><span data-feather="shopping-bag"></span> BOOK STORE (w/ htmx)</a></li>
   </ul>
  
   <ul class="sidebar-nav">
