@@ -1,3 +1,4 @@
+from multiprocessing import context
 from operator import sub
 from django.shortcuts import redirect, render
 from django.contrib import messages
@@ -169,8 +170,8 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('books')
     permission_required = 'catalog.can_mark_returned'
 
-# @permission_required
-def book_store(request):
+@login_required
+def book_store(request, use_htmx=False):
     book_list = Book.objects.all()
     cart = get_cart(request)
     if not cart:
@@ -180,30 +181,33 @@ def book_store(request):
         'book_list' : book_list,
         'cart' : cart
     }
+    if use_htmx == 'True':
+        return render(request, 'store_htmx/htmx_book_store.html', context)
     return render(request, 'store_no_htmx/book_store.html', context)
 
+@login_required
 def make_cart(request):
     cart = Cart(owner=request.user).save()
     return cart
 
+@login_required
 def get_cart(request):
     cart = request.user.cart_set.all().last()
     return cart
 
-def cart_item_count(request):
-    cart = get_cart(request)
-    cart_item_count = 0
-    # sum[cart.items]
-    context = { 'cart_item_count' : cart_item_count }
-    return render(request, 'store_htmx/_partial_cart_item_count.html', context)
-
-def clear_cart(request):
+def clear_cart(request, use_htmx=False):
     cart = get_cart(request)
     cart.items.clear()
     cart.save()
+    if use_htmx == 'True':
+            # return redirect('store', use_htmx=True)
+            context = {'cart':cart,}
+            response = render(request, 'store_htmx/htmx_cart_partial.html', context)
+            response['HX-Trigger'] = "cart_updated"
+            return response
     return redirect('store')
 
-def add_to_cart(request, book_id, go_to_cart=False):
+def add_to_cart(request, book_id, go_to_cart=False, use_htmx=False):
     cart = get_cart(request)
     book = Book.objects.get(id=book_id)
     try:
@@ -213,11 +217,18 @@ def add_to_cart(request, book_id, go_to_cart=False):
         cart.items[book.title] = 0
     cart.items[book.title] += 1
     cart.save()
-    if not go_to_cart:
-        return redirect('store')
+    if not go_to_cart == 'True':
+        if use_htmx == 'True':
+            # return redirect('store', use_htmx=True)
+            context = {'cart':cart}
+            response = render(request, 'store_htmx/htmx_partial_cart_button.html', context)
+            response['HX-Trigger'] = "cart_updated"
+            return response
+        else:
+            return redirect('store')
     return redirect('cart-detail', cart.id) 
 
-def remove_from_cart(request, book_id):
+def remove_from_cart(request, book_id, use_htmx=False):
     cart = get_cart(request)
     book = Book.objects.get(id=book_id)
     title = book.title
@@ -227,10 +238,16 @@ def remove_from_cart(request, book_id):
         messages.error(request, f"Book: '{title}' is not in your cart")
         return redirect('store')
     cart.save()
+    if use_htmx == 'True':
+            # return redirect('store', use_htmx=True)
+            context = {'cart':cart,}
+            response = render(request, 'store_htmx/htmx_cart_total_row_partial.html', context)
+            response['HX-Trigger'] = "cart_updated"
+            return response
     messages.success(request, f"Book: '{title}' was removed from your cart")
     return redirect('cart-detail', cart.id)
 
-def cart_detail(request, *args, **kwargs):
+def cart_detail(request, use_htmx=False, *args, **kwargs):
     cart = Cart.objects.get(pk=int(kwargs['cart_id']))
     book_list = []
     book_names = cart.items.keys()
@@ -246,4 +263,22 @@ def cart_detail(request, *args, **kwargs):
         }
         book_list.append(carted_book)
     context = { 'cart':cart, 'book_list' : book_list, }
+    if use_htmx == 'True':
+        return render(request, 'store_htmx/htmx_cart_partial.html', context)
     return render(request, 'store_no_htmx/cart_detail.html', context)
+
+# PARTIALS
+def book_detail_partial(request, book_id):
+    book = Book.objects.get(id=book_id)
+    context = { 'book' : book}
+    return render(request, 'store_htmx/htmx_partial_book_detail.html', context)
+
+def cart_button_info_partial(request, cart_id):
+    cart = Cart.objects.get(id=cart_id)
+    context = {'cart':cart}
+    return render(request, 'store_htmx/htmx_partial_cart_button.html', context)
+
+def cart_total_row_partial(request, cart_id):
+    cart = Cart.objects.get(id=cart_id)
+    context = {'cart':cart}
+    return render(request, 'store_htmx/htmx_cart_total_row_partial.html', context)
