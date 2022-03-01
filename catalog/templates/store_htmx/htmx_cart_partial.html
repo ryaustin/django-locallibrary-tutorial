@@ -1,0 +1,63 @@
+
+<script src="https://unpkg.com/feather-icons"></script>
+<style>
+  tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+</style>
+<div id="cart-backdrop" class="cart-backdrop fade show" style="display:block;"></div>
+<div id="cart" class="modal fade show" tabindex="-1" style="display:block;">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">{{cart.owner|upper}}'s Cart</h5>
+		</div>
+		<div class="modal-body">
+		  {% if book_list %}
+      <table class="table">
+        <thead style="font-weight: bold;">
+          <tr>
+            <td>BOOK</td>
+            <td>QTY</td>
+            <td>PRICE</td>
+            <td>SUBTOTAL</td>
+            <td><span data-feather="trash">x</span></td>
+          </tr>
+        </thead>
+        {% for book in book_list %}
+        <tbody hx-target="closest tr" hx-swap="outterHTML">
+          <tr>
+            <td>{{ book.book.title }}</a></td>
+            <td>{{book.qty}}</td>
+            <td>${{book.book.price}}</td>
+            <td>${{book.subtotal}}</td>
+            <!-- <td><a href="{% url 'remove-from-cart' book_id=book.book.id %}"><span data-feather="trash">x</span></a></td> -->
+            <td><a href="" hx-delete="{% url 'remove-from-cart' book_id=book.book.id use_htmx=True %}" hx-select="none"><span data-feather="trash">x</span></a></td>
+          </tr>
+        </tbody>
+        {% endfor %}
+        <tfoot>
+          <tr id="totals-row" hx-swap="innterHTML" style="font-weight: bold; font-size: large;">
+            <td>TOTAL:</td>
+            <td>{{cart.quantity}}</td>
+            <td></td>
+            <td>${{cart.total}}</td>
+            {% include 'store_htmx/htmx_cart_total_row_partial.html' %}
+          </tr>
+          
+        </tfoot>
+      </table>
+
+    {% else %}
+      <p>There are no books in the cart.</p>
+    {% endif %}     
+		</div>
+		<div class="modal-footer">
+      <a hx-get="{% url 'clear-cart' use_htmx=True %}" class="btn btn-danger" onclick="closeCartModal()"><span data-feather="x"></span> CLEAR CART </a>
+		  <button type="button" class="btn btn-secondary" onclick="closeCartModal()">Close</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <script>feather.replace()</script>
