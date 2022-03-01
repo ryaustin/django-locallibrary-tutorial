@@ -1,0 +1,35 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Book Store</h1>
+<div style="float: right; color: teal; margin-right: 3em; padding-bottom: 3em;">
+  <a href="{% url 'cart-detail' cart_id=cart.id %}" class="btn btn-info"> {{ cart.quantity }} <em>books</em> in {{ cart.owner|upper }}'s cart &nbsp; <span data-feather="shopping-cart"></span> &nbsp; ${{ cart.total }}</a>
+</div>
+    {% if book_list %}
+      <table class="table table-hover">
+        <thead style="font-weight: bold;">
+          <tr>
+            <td>BOOK</td>
+            <td>AUTHOR</td>
+            <td>PRICE</td>
+            <td>ADD</td>
+          </tr>
+        </thead>
+        {% for book in book_list %}
+        <tbody>
+          <tr>
+            <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>
+            <td>{{book.author}}</td>
+            <td>${{book.price}}</td>
+            <td><a href="{% url 'add-to-cart' book_id=book.id %}" type="button" class="btn btn-outline-info"><span data-feather="shopping-cart">+</span> Add to Cart</a>
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+
+    {% else %}
+      <p>There are no books in the store.</p>
+    {% endif %}       
+{% endblock %}
+
