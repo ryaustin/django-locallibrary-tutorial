@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Book Store</h1>
+    <h1>Book Store <em style="color: teal;">NO HTMX</em></h1>
 <div style="float: right; color: teal; margin-right: 3em; padding-bottom: 3em;">
   <a href="{% url 'cart-detail' cart_id=cart.id %}" class="btn btn-info"> {{ cart.quantity }} <em>books</em> in {{ cart.owner|upper }}'s cart &nbsp; <span data-feather="shopping-cart"></span> &nbsp; ${{ cart.total }}</a>
 </div>
