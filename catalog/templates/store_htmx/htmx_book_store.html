@@ -1,0 +1,84 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Book Store <em style="color:steelblue;"> <span data-feather="thumbs-up">Yes</span> HTMX</em></h1>
+<div style="float: right; color:steelblue; margin-right: 3em; padding-bottom: 3em;" id="cart_button"
+  hx-get="{% url 'cart-button-partial' cart_id=cart.id %}" hx-trigger="cart_updated from:body" hx-swap="innerHTML">
+  {% include 'store_htmx/htmx_partial_cart_button.html' %}
+</div>
+<div id="cart-here"></div>
+<!-- PLEASE DON'T SPILL MY AREA -->
+<div>
+  <input type="text" placeholder="Your Name" style="width: 150px">
+   &nbsp; Please don't spill my:
+  <select class="form-select" aria-label="Default select example">
+    <option selected>Beer 🍺</option>
+    <option value="Beer">Inconspicuous drink in a tumbler: 🥤 </option>
+    <option value="Wine">Wine 🍷</option>
+    <option value="Margaritta">Margaritta 🍸</option>
+  </select>
+  <p class="text-muted" style="font-size: small;"><em>Here we are demonstrating that the page will never reload.</em></p>
+</div>
+<!-- ****************************************** -->
+{% if book_list %}
+<table class="table table-hover">
+  <thead style="font-weight: bold;">
+    <tr>
+      <td>BOOK</td>
+      <td>AUTHOR</td>
+      <td>PRICE</td>
+      <td>ADD</td>
+    </tr>
+  </thead>
+  {% for book in book_list %}
+  <tbody>
+    <tr>
+      <td><a href="" hx-get="{% url 'book-detail-partial' book_id=book.id %}" hx-target="#modals-here"
+          hx-trigger="click"
+          _="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop">{{ book.title }}</a></td>
+      <div id="modals-here"></div>
+      <td>{{book.author}}</td>
+      <td>${{book.price}}</td>
+      <td><a hx-get="{% url 'add-to-cart' book_id=book.id go_to_cart=False use_htmx=True %}" hx-swap="none" href=""
+          type="button" class="btn btn-outline-primary"><span data-feather="shopping-cart">+</span> Add to Cart</a>
+        <!-- <td><a href="{% url 'add-to-cart' book_id=book.id %}" type="button" class="btn btn-outline-primary"><span data-feather="shopping-cart">+</span> Add to Cart</a> -->
+      </td>
+    </tr>
+  </tbody>
+  {% endfor %}
+</table>
+
+{% else %}
+<p>There are no books in the store.</p>
+{% endif %}
+<script>
+  function closeModal() {
+    var container = document.getElementById("modals-here")
+    var backdrop = document.getElementById("modal-backdrop")
+    var modal = document.getElementById("modal")
+
+    modal.classList.remove("show")
+    backdrop.classList.remove("show")
+
+    setTimeout(function () {
+      container.removeChild(backdrop)
+      container.removeChild(modal)
+    }, 200)
+  }
+</script>
+<script>
+  function closeCartModal() {
+    var container = document.getElementById("cart-here")
+    var backdrop = document.getElementById("cart-backdrop")
+    var modal = document.getElementById("cart")
+
+    modal.classList.remove("show")
+    backdrop.classList.remove("show")
+
+    setTimeout(function () {
+      container.removeChild(backdrop)
+      container.removeChild(modal)
+    }, 200)
+  }
+</script>
+{% endblock %}
