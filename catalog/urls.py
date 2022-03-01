@@ -38,3 +38,14 @@ urlpatterns += [
     path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
     path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
 ]
+
+# Add URLConf for book store
+urlpatterns += [
+    path('store/', views.book_store, name='store'),
+    path('store/add/<book_id>', views.add_to_cart, name='add-to-cart'),
+    path('store/add/<book_id>/<go_to_cart>', views.add_to_cart, name='add-to-cart'),
+    path('store/remove/<book_id>', views.remove_from_cart, name='remove-from-cart'),
+    path('store/clear_cart', views.clear_cart, name='clear-cart'),
+    path('store/cart_detail/<cart_id>', views.cart_detail, name='cart-detail'),
+    
+]
