@@ -4,6 +4,11 @@
 
 <h1>Author List</h1>
 
+<a href="{% url 'author-create' %}" class="btn btn-sm btn-outline-primary">
+  <span data-feather="user-plus"></span>
+    Create Author
+</a>
+
 {% if author_list %}
   <ul>
 

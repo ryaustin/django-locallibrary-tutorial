@@ -1,0 +1,44 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>{{cart.owner|upper}}'s Cart</h1>
+    <div style="float: right; color: teal; margin-right: 3em; padding-bottom: 3em;">
+      <a href="{% url 'clear-cart' %}" class="btn btn-danger"><span data-feather="x"></span> CLEAR CART </a>
+      <a href="{% url 'store' %}" class="btn btn-info"><span data-feather="corner-down-left"></span> BACK TO STORE </a>
+    </div>
+    {% if book_list %}
+      <table class="table table-hover">
+        <thead style="font-weight: bold;">
+          <tr>
+            <td>BOOK</td>
+            <td>QTY</td>
+            <td>PRICE</td>
+            <td>SUBTOTAL</td>
+            <td><span data-feather="trash"></span></td>
+          </tr>
+        </thead>
+        {% for book in book_list %}
+        <tbody>
+          <tr>
+            <td><a href="{{ book.book.get_absolute_url }}">{{ book.book.title }}</a></td>
+            <td>{{book.qty}}</td>
+            <td>${{book.book.price}}</td>
+            <td>${{book.subtotal}}</td>
+            <td><a href="{% url 'remove-from-cart' book_id=book.book.id %}"><span data-feather="trash"></span></a></td>
+          </tr>
+        </tbody>
+        {% endfor %}
+        <tfoot>
+          <tr style="font-weight: bold; font-size: large;">
+            <td>TOTAL:</td>
+            <td>{{cart.quantity}}</td>
+            <td></td>
+            <td>${{cart.total}}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+    {% else %}
+      <p>There are no books in the cart.</p>
+    {% endif %}       
+{% endblock %}

@@ -1,0 +1,10 @@
+<!-- Adding the scripts here just allows us to use the feather icons.
+Additionally it shows that this partial can be treated like any web page. -->
+<script src="https://unpkg.com/feather-icons"></script>
+<a hx-get="{% url 'cart-detail' cart_id=cart.id use_htmx=True %}" 
+    hx-target="#cart-here" 
+    hx-trigger="click"
+    class="btn btn-primary"
+    _="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop"
+     style="background-color: steelblue; border-color: steelblue;"> {{ cart.quantity }} <em>books</em> in {{ cart.owner|upper }}'s cart &nbsp; <span data-feather="shopping-cart"></span> &nbsp; ${{ cart.total }}</a>
+<script>feather.replace()</script>

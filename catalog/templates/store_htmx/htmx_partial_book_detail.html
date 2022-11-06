@@ -1,0 +1,27 @@
+<div id="modal-backdrop" class="modal-backdrop fade show" style="display:block;"></div>
+<div id="modal" class="modal fade show" tabindex="-1" style="display:block;">
+	<div class="modal-dialog modal-dialog-centered">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">**Title: {{ book.title }}</h5>
+		</div>
+		<div class="modal-body">
+            <p><strong>Author:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
+            <p><strong>Summary:</strong> {{ book.summary }}</p>
+            <p><strong>ISBN:</strong> {{ book.isbn }}</p> 
+            <p><strong>Language:</strong> {{ book.language }}</p>  
+            <p><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>
+
+		</div>
+		<div class="modal-footer">
+      <!-- <a href="{% url 'add-to-cart' book_id=book.id go_to_cart=False use_htmx=True %}" type="button" class="btn btn-outline-primary"> BUY</a> -->
+      <a href="" type="button" class="btn btn-outline-primary"
+      hx-get="{% url 'add-to-cart' book_id=book.id go_to_cart=False use_htmx=True %}"
+      hx-swap="none"
+
+      > BUY</a>
+		  <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+		</div>
+	  </div>
+	</div>
+  </div>

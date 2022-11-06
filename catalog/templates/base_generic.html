@@ -11,8 +11,10 @@
   <!-- Add additional CSS in static file -->
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
 <div class="container-fluid">
 
@@ -23,6 +25,8 @@
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'books' %}">All books</a></li>
     <li><a href="{% url 'authors' %}">All authors</a></li>
+    <li style="padding: 5px;"><a href="{% url 'store' %}"><span data-feather="shopping-bag"></span> BOOK STORE (no htmx)</a></li>
+    <li style="padding: 5px;"><a href="{% url 'store' use_htmx=True %}"><span data-feather="shopping-bag"></span> BOOK STORE (w/ htmx)</a></li>
   </ul>
  
   <ul class="sidebar-nav">
@@ -47,7 +51,14 @@
  
 {% endblock %}
   </div>
-  <div class="col-sm-10 ">
+  <div class="col-sm-10 alert" role="alert">
+    {% if messages %}
+    <ul class="button btn-info btn-lg">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
   {% block content %}{% endblock %}
   
   {% block pagination %}
@@ -74,4 +85,7 @@
 
 </div>
 </body>
+<script>
+  feather.replace()
+</script>
 </html>
