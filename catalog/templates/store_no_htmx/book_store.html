@@ -5,6 +5,9 @@
 <div style="float: right; color: teal; margin-right: 3em; padding-bottom: 3em;">
   <a href="{% url 'cart-detail' cart_id=cart.id %}" class="btn btn-info"> {{ cart.quantity }} <em>books</em> in {{ cart.owner|upper }}'s cart &nbsp; <span data-feather="shopping-cart"></span> &nbsp; ${{ cart.total }}</a>
 </div>
+<!-- PLEASE DON'T SPILL MY AREA -->
+{% include 'store_htmx/dont_spill.html' %}
+<!-- ****************************************** -->
     {% if book_list %}
       <table class="table table-hover">
         <thead style="font-weight: bold;">

@@ -8,17 +8,7 @@
 </div>
 <div id="cart-here"></div>
 <!-- PLEASE DON'T SPILL MY AREA -->
-<div>
-  <input type="text" placeholder="Your Name" style="width: 150px">
-   &nbsp; Please don't spill my:
-  <select class="form-select" aria-label="Default select example">
-    <option selected>Beer 🍺</option>
-    <option value="Beer">Inconspicuous drink in a tumbler: 🥤 </option>
-    <option value="Wine">Wine 🍷</option>
-    <option value="Margaritta">Margaritta 🍸</option>
-  </select>
-  <p class="text-muted" style="font-size: small;"><em>Here we are demonstrating that the page will never reload.</em></p>
-</div>
+{% include 'store_htmx/dont_spill.html' %}
 <!-- ****************************************** -->
 {% if book_list %}
 <table class="table table-hover">
