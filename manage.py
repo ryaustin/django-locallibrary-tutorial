@@ -6,6 +6,8 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    # setting ipyhon as default debugger
+    os.environ["PYTHONBREAKPOINT"] = "ipdb.set_trace"
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'locallibrary.settings')
     try:
         from django.core.management import execute_from_command_line
