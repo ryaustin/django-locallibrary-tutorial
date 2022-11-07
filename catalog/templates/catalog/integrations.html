@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Integrations</h1>
+    <div>
+    {% if not integrations.zoho_books %}
+        <a href="{% url 'connect-to-zoho-books' %}">Connect to ZOHO Books</a>
+    {% else %}
+        <a href="{% url 'disconnect-from-zoho-books' %}" class="text-danger">🔌 Disconnect from ZOHO Books</a>
+    {% endif %}
+    </div>
+
+  
+{% endblock %}

@@ -1,10 +1,11 @@
+import requests
 from django.shortcuts import render
 from django.shortcuts import redirect, render
 from django.contrib import messages
 
 # Create your views here.
 
-from .models import Book, Author, BookInstance, Genre, Cart
+from .models import Book, Author, BookInstance, Genre, Cart, Language
 
 
 def index(request):
@@ -281,3 +282,11 @@ def cart_total_row_partial(request, cart_id):
     cart = Cart.objects.get(id=cart_id)
     context = {'cart':cart}
     return render(request, 'store_htmx/htmx_cart_total_row_partial.html', context)
+
+
+# Integrations
+@login_required
+def integrations_view(request):
+    profile = request.user.profile
+    integrations = profile.integration_info
+    return render(request, 'catalog/integrations.html', context={'integrations':integrations})

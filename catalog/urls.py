@@ -1,5 +1,7 @@
 from django.urls import path
 
+from catalog.integrations.zoho_books import zoho_views
+
 from . import views
 
 
@@ -58,4 +60,13 @@ urlpatterns += [
     path('store/cart_button_partial/<cart_id>', views.cart_button_info_partial, name='cart-button-partial'),
     path('store/cart_total_row_partial/<cart_id>', views.cart_total_row_partial, name='cart-total-row'),
 
+]
+
+# Integrations
+urlpatterns += [
+    path('integrations', views.integrations_view, name='integrations'),
+    # zoho books
+    path('zoho/callback', zoho_views.zoho_books_callback, name='zoho-books-callback'),
+    path('zoho/connect', zoho_views.connect_to_zoho_books, name='connect-to-zoho-books'),
+    path('zoho/disconnect', zoho_views.disconnect_from_zoho_books, name='disconnect-from-zoho-books'),
 ]

@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Author, Genre, Book, BookInstance, Language
+from .models import Author, Genre, Book, BookInstance, Language, Profile
 
 """Minimal registration of Models.
 admin.site.register(Book)
@@ -14,13 +14,15 @@ admin.site.register(Language)
 
 admin.site.register(Genre)
 admin.site.register(Language)
-
+admin.site.register(Profile)
 
 class BooksInline(admin.TabularInline):
     """Defines format of inline book insertion (used in AuthorAdmin)"""
     model = Book
 
-
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'integration_info')
+    
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     """Administration object for Author models.
