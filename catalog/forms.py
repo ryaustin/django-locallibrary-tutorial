@@ -7,19 +7,29 @@ from django import forms
 
 class RenewBookForm(forms.Form):
     """Form for a librarian to renew books."""
+
     renewal_date = forms.DateField(
-            help_text="Enter a date between now and 4 weeks (default 3).")
+        help_text="Enter a date between now and 4 weeks (default 3)."
+    )
 
     def clean_renewal_date(self):
-        data = self.cleaned_data['renewal_date']
+        data = self.cleaned_data["renewal_date"]
 
         # Check date is not in past.
         if data < datetime.date.today():
-            raise ValidationError(_('Invalid date - renewal in past'))
+            raise ValidationError(_("Invalid date - renewal in past"))
         # Check date is in range librarian allowed to change (+4 weeks)
         if data > datetime.date.today() + datetime.timedelta(weeks=4):
-            raise ValidationError(
-                _('Invalid date - renewal more than 4 weeks ahead'))
+            raise ValidationError(_("Invalid date - renewal more than 4 weeks ahead"))
 
         # Remember to always return the cleaned data.
         return data
+
+
+class CSVUploadForm(forms.Form):
+    csv_file = forms.FileField(label="Upload CSV")
+
+    # def process_csv(self):
+    #     if self.is_valid():
+    #         csv_file = self.cleaned_data["csv_file"]
+    #         import_books_from_csv(csv_file.path)

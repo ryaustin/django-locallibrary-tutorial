@@ -32,8 +32,15 @@ def connect_to_zoho_books(request):
     """
     # 1. Build the request_uri
     # 2. Redirect the user to the request_uri
-    # TODO: Implement this
-    pass
+    scope = "ZohoBooks.fullaccess.all"
+    client_id = config("ZOHO_API_CLIENT_ID", "")
+    state = "testing"
+    response_type = "code"
+    redirect_uri = config("ZOHO_API_REDIRECT_URI", "")
+    access_type = "offline"
+    params = f"scope={scope}&client_id={client_id}&state={state}&response_type={response_type}&redirect_uri={redirect_uri}&access_type={access_type}"
+    request_uri = f"https://accounts.zoho.com/oauth/v2/auth?{params}"
+    return redirect(request_uri)
 
 
 @login_required
@@ -48,9 +55,22 @@ def zoho_books_callback(request):
     # 5. Store the access token in the database
     # 6. Redirect the user to the integrations page
     # TODO: Implement this
-    
-    pass
-    
+    state = request.GET.get("state", "")
+    if state != "testing":
+        return HttpResponse("Invalid state")
+    else:
+        code = request.GET.get("code", "")
+        client_id = config("ZOHO_API_CLIENT_ID", "")
+        client_secret = config("ZOHO_API_CLIENT_SECRET", "")
+        redirect_uri = config("ZOHO_API_REDIRECT_URI", "")
+        grant_type = "authorization_code"
+        params = f"code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri={redirect_uri}&grant_type={grant_type}"
+        response = requests.post(f"https://accounts.zoho.com/oauth/v2/token?{params}")
+        if response.status_code != 200:
+            return HttpResponse("Error getting access token")
+        else:
+            store_token(request, response, "zoho_books")
+    return redirect("integrations")
   
 def store_token(request, response, service_name: str):
     """
@@ -62,8 +82,8 @@ def store_token(request, response, service_name: str):
     # 3. Redirect the user to the integrations page
     # 4. Display a success message to the user
     # TODO: Implement this
-    
-    pass
+    messages.success(request, f"Successfully connected to {service_name}")
+    return redirect("integrations")
    
 
 def disconnect_from_zoho_books(request):

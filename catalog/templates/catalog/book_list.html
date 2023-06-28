@@ -2,6 +2,12 @@
 
 {% block content %}
     <h1>Book Library</h1>
+    <!-- create a div with a button on the right of the page -->
+    <div class="float-right">
+      <a class="btn btn-primary" href="{% url 'book-create' %}">Add Book</a>
+      <!-- create a button to add multiple here -->
+      <a class="btn btn-secondary" href="{% url 'book-create-multiple' %}">Add Multiple Books</a>
+    </div>
 
     {% if book_list %}
     <ul class="mt-3">
