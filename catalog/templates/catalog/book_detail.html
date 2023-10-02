@@ -1,8 +1,14 @@
 {% extends "base_generic.html" %}
+{% load static %}
 
 {% block content %}
 
 <h1>Title: {{ book.title }} <a href="{% url 'add-to-cart' book_id=book.id go_to_cart=True %}" type="button" class="btn btn-outline-info"> BUY</a></h1>
+
+<!-- add the cover_image -->
+{% if book.cover_image %}
+<img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="img-thumbnail">
+{% endif %}
 
 <p><strong>Author:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
 <p><strong>Summary:</strong> {{ book.summary }}</p>
