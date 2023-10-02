@@ -148,6 +148,7 @@ STATIC_URL = '/static/'
 
 # Static file serving.
 # http://whitenoise.evans.io/en/stable/django.html#django-middleware
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")  # Absolute path to the media directory
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

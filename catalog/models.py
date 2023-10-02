@@ -75,6 +75,7 @@ class Book(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     qty_on_hand = models.IntegerField(default=0)
     metadata = models.JSONField(default=dict, blank=True)
+    cover_image = models.ImageField(upload_to="covers/", blank=True)
 
     class Meta:
         ordering = ["title", "author"]

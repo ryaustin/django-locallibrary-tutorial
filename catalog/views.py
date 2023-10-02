@@ -173,7 +173,7 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
 # Classes created for the forms challenge
 class BookCreate(PermissionRequiredMixin, CreateView):
     model = Book
-    fields = ["title", "author", "summary", "isbn", "genre", "language"]
+    fields = ["title", "author", "summary", "isbn", "genre", "language", "cover_image"]
     permission_required = "catalog.can_mark_returned"
 
 
